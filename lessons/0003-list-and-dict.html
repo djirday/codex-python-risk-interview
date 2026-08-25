@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0003 — List и dict</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body data-lesson="lesson-0003">
+<div class="progress-shell" role="progressbar" aria-label="Прогресс урока" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar" data-progress></div></div>
+<main>
+  <nav class="lesson-nav" aria-label="Навигация урока"><a href="0002-basic-value-types.html">← Lesson 0002</a><span>Block 0 · Lesson 3 из 5 · ≈ 10 минут</span></nav>
+  <section class="screen">
+    <p class="eyebrow">Следующий маленький шаг</p><h1>Несколько значений вместе</h1>
+    <p class="lead">Цель: прочитать готовые <code>list</code> и <code>dict</code>, а затем достать одно нужное значение.</p>
+    <p class="status-pill" data-saved-status hidden>Этот урок уже пройден в этом browser</p>
+  </section>
+  <section class="screen" id="list">
+    <p class="eyebrow">1 · List</p><h2>Порядок значений важен</h2>
+    <pre><code>dpd_history = [0, 10, 35]</code></pre>
+    <p>Квадратные скобки создают <code>list</code>. Здесь в одном имени хранится DPD клиента за три месяца: сначала <code>0</code>, затем <code>10</code>, затем <code>35</code>.</p>
+    <pre><code>dpd_history[0]  # 0
+dpd_history[2]  # 35</code></pre>
+    <div class="card"><p>Позиции в Python начинаются с <code>0</code>. Поэтому первый элемент имеет index <code>0</code>, а третий — index <code>2</code>.</p></div>
+    <div class="quiz" data-quiz data-correct="Верно: index 1 указывает на второй элемент — 10." data-wrong="Отсчитайте позиции с нуля: 0 → 0, 1 → 10, 2 → 35.">
+      <h2>Что вернёт <code>dpd_history[1]</code>?</h2><div class="choices"><button class="choice" data-answer="wrong"><code>0</code></button><button class="choice" data-answer="correct"><code>10</code></button><button class="choice" data-answer="wrong"><code>35</code></button><button class="choice" data-answer="wrong"><code>1</code></button></div><p class="feedback" data-feedback aria-live="polite"></p>
+    </div>
+  </section>
+  <section class="screen" id="dict">
+    <p class="eyebrow">2 · Dict</p><h2>Значение названо key</h2>
+    <pre><code>loan = {
+    "segment": "prime",
+    "bad_rate": 0.07
+}</code></pre>
+    <p>Фигурные скобки создают <code>dict</code>. Каждая пара состоит из <code>key: value</code>: например, key <code>"segment"</code> ведёт к value <code>"prime"</code>.</p>
+    <pre><code>loan["segment"]  # "prime"</code></pre>
+    <p>У <code>dict</code> мы указываем не позицию, а нужный key. Это похоже на одну строку таблицы, где key напоминает название column.</p>
+    <div class="quiz" data-quiz data-correct="Верно: key bad_rate ведёт к числу 0.07." data-wrong="Найдите пару, слева от двоеточия которой записан key bad_rate.">
+      <h2>Что вернёт <code>loan["bad_rate"]</code>?</h2><div class="choices"><button class="choice" data-answer="wrong"><code>"segment"</code></button><button class="choice" data-answer="wrong"><code>"prime"</code></button><button class="choice" data-answer="correct"><code>0.07</code></button><button class="choice" data-answer="wrong"><code>"bad_rate"</code></button></div><p class="feedback" data-feedback aria-live="polite"></p>
+    </div>
+  </section>
+  <section class="screen" id="check">
+    <p class="eyebrow">Финиш · Retrieval practice</p><h2>Позиция или key?</h2>
+    <div class="quiz" data-quiz data-correct="Верно: у list значение выбирается по числовому index." data-wrong="Квадратные скобки с несколькими значениями создали list; его элементы выбирают по index."><p><strong>Чем выбираем элемент из <code>list</code>?</strong></p><div class="choices"><button class="choice" data-answer="correct">Числовым index</button><button class="choice" data-answer="wrong">Текстовым value</button><button class="choice" data-answer="wrong">Знаком равенства</button><button class="choice" data-answer="wrong">Круглой скобкой</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+    <div class="quiz" data-quiz data-correct="Верно: у dict значение выбирается по его key." data-wrong="В паре key: value обращение к dict использует key."><p><strong>Чем выбираем value из <code>dict</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Номером строки</button><button class="choice" data-answer="correct">Именем key</button><button class="choice" data-answer="wrong">Самим value</button><button class="choice" data-answer="wrong">Знаком равенства</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+    <div class="card lesson-complete" data-completion hidden><h2>Lesson 0003 пройден</h2><p>Не запускайте код. Пришлите в чат результат каждого выражения и объясните, почему:</p><pre><code>rates = [0.03, 0.07, 0.12]
+client = {"segment": "prime", "mob": 6}
+
+rates[1]
+client["mob"]</code></pre><p>После ответа откроем Lesson 0004.</p></div>
+  </section>
+  <section class="sources"><h2>Primary sources</h2><p><a href="https://docs.python.org/3/tutorial/introduction.html#lists">Официальный Python Tutorial: Lists</a> и <a href="https://docs.python.org/3/tutorial/datastructures.html#dictionaries">Data Structures: Dictionaries</a>.</p><p><a href="../reference/python-basics.html">Шпаргалка Python basics</a>.</p></section>
+  <footer><p>Если непонятно, чем index отличается от key, задайте агенту один короткий вопрос.</p></footer>
+</main>
+<script src="../assets/lesson.js"></script>
+</body>
+</html>
