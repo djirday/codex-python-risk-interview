@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0002 — Basic value types</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body data-lesson="lesson-0002">
+<div class="progress-shell" role="progressbar" aria-label="Прогресс урока" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar" data-progress></div></div>
+<main>
+  <nav class="lesson-nav" aria-label="Навигация урока"><a href="0001-how-to-read-python.html">← Lesson 0001</a><span>Block 0 · Lesson 2 из 5 · ≈ 10 минут</span></nav>
+  <section class="screen">
+    <p class="eyebrow">Следующий маленький шаг</p><h1>Четыре вида значений</h1>
+    <p class="lead">Цель: по записи справа от <code>=</code> отличить целое число, дробное число, текст и ответ «да/нет».</p>
+    <p class="status-pill" data-saved-status hidden>Этот урок уже пройден в этом browser</p>
+  </section>
+  <section class="screen" id="four-types">
+    <p class="eyebrow">1 · До → Код → После</p><h2>Python видит значение и его type</h2>
+    <pre><code>dpd = 30
+interest_rate = 0.18
+loan_id = "L001"
+is_overdue = True</code></pre>
+    <div class="card"><p><code>30</code> — целое число, type <code>int</code>.</p><p><code>0.18</code> — дробное число, type <code>float</code>.</p><p><code>"L001"</code> — текст, type <code>str</code>.</p><p><code>True</code> — логическое «да», type <code>bool</code>.</p></div>
+    <p><strong>Зачем:</strong> type определяет допустимые операции. Ставку можно умножать, а loan ID нужен как идентификатор, даже если похож на число.</p>
+  </section>
+  <section class="screen" id="quotes">
+    <p class="eyebrow">2 · Главная ловушка</p><h2>Кавычки меняют type</h2>
+    <pre><code>dpd_number = 30
+dpd_text = "30"</code></pre>
+    <p><code>30</code> — <code>int</code>, а <code>"30"</code> — <code>str</code>. В risk data числа иногда приходят как текст — тогда расчёты требуют cleaning.</p>
+    <div class="quiz" data-quiz data-correct="Верно: кавычки делают значение текстом." data-wrong="Посмотрите именно на кавычки вокруг 30.">
+      <h2>Какое значение имеет type <code>str</code>?</h2><div class="choices"><button class="choice" data-answer="wrong">Число без кавычек</button><button class="choice" data-answer="correct">Число внутри кавычек</button><button class="choice" data-answer="wrong">Ставка без кавычек</button><button class="choice" data-answer="wrong">Флаг без кавычек</button></div><p class="feedback" data-feedback aria-live="polite"></p>
+    </div>
+  </section>
+  <section class="screen" id="boolean">
+    <p class="eyebrow">3 · Да или нет</p><h2><code>bool</code> хранит два возможных значения</h2>
+    <pre><code>is_overdue = True
+is_restructured = False</code></pre>
+    <p><code>True</code> и <code>False</code> пишутся с заглавной буквы и без кавычек. Такой flag читается как короткий вопрос: «кредит просрочен?»</p>
+    <div class="quiz" data-quiz data-correct="Верно: это bool со значением False." data-wrong="Bool пишется без кавычек: True или False.">
+      <h2>Где записан type <code>bool</code>?</h2><div class="choices"><button class="choice" data-answer="wrong"><code>status = "False"</code></button><button class="choice" data-answer="wrong"><code>status = "no"</code></button><button class="choice" data-answer="correct"><code>status = False</code></button><button class="choice" data-answer="wrong"><code>status = 0.0</code></button></div><p class="feedback" data-feedback aria-live="polite"></p>
+    </div>
+  </section>
+  <section class="screen" id="check">
+    <p class="eyebrow">Финиш · Retrieval practice</p><h2>Определите type без подсказки</h2>
+    <div class="quiz" data-quiz data-correct="Верно: точка отделяет дробную часть float." data-wrong="Это число с дробной частью, не текст и не целое число."><p><strong>Какой type у <code>exposure = 1250.50</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>int</code></button><button class="choice" data-answer="correct"><code>float</code></button><button class="choice" data-answer="wrong"><code>str</code></button><button class="choice" data-answer="wrong"><code>bool</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+    <div class="quiz" data-quiz data-correct="Верно: кавычки обозначают строку str." data-wrong="Даже числовые символы внутри кавычек остаются текстом."><p><strong>Какой type у <code>client_id = "1042"</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>int</code></button><button class="choice" data-answer="wrong"><code>float</code></button><button class="choice" data-answer="correct"><code>str</code></button><button class="choice" data-answer="wrong"><code>bool</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+    <div class="card lesson-complete" data-completion hidden><h2>Lesson 0002 пройден</h2><p>Пришлите в чат type каждого значения и коротко объясните, по какому признаку вы его узнали:</p><pre><code>mob = 6
+bad_rate = 0.07
+segment = "prime"
+is_active = True</code></pre><p>Не запускайте код: сейчас тренируем чтение. После ответа откроем Lesson 0003.</p></div>
+  </section>
+  <section class="sources"><h2>Primary sources</h2><p><a href="https://docs.python.org/3/tutorial/introduction.html#numbers">Официальный Python Tutorial: Numbers</a> и <a href="https://docs.python.org/3/library/stdtypes.html#truth-value-testing">Built-in Types: Truth Value Testing</a>.</p><p><a href="../reference/python-basics.html">Шпаргалка Python basics</a>.</p></section>
+  <footer><p>Если непонятно, почему значение получило конкретный type, задайте агенту один короткий вопрос.</p></footer>
+</main>
+<script src="../assets/lesson.js"></script>
+</body>
+</html>
