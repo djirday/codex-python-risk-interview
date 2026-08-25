@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0004 — Python Foundations → Pandas Bridge</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body data-lesson="lesson-0004">
+<div class="progress-shell" role="progressbar" aria-label="Прогресс урока" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar" data-progress></div></div>
+<main>
+<nav class="lesson-nav" aria-label="Навигация урока"><a href="0003-list-and-dict.html">← Lesson 0003</a><span>FAST TRACK · 30–45 минут · 16 checks</span></nav>
+<section class="screen compact-screen">
+  <p class="eyebrow">Python Foundations → Pandas Bridge</p><h1>Прочитать code как analyst</h1>
+  <p class="lead">Не учим конструкции по одной. За один маршрут прочитаем realistic loan object, decision logic и превращение records в таблицу.</p>
+  <div class="card route-map"><strong>Карта:</strong> values → containers → conditions → flow → function → import → <code>DataFrame</code></div>
+  <p class="status-pill" data-saved-status hidden>Этот урок уже пройден в этом browser</p>
+</section>
+<section class="screen compact-screen" id="values-list">
+  <p class="eyebrow">1 · Быстрое повторение</p><h2>Variables, types и list</h2>
+  <pre><code>segment = "prime"  # str
+mob = 6             # int
+bad_rate = 0.07     # float
+is_active = True    # bool
+
+dpd = [0, 10, 30]
+dpd[0]   # 0
+dpd[1]   # 10
+dpd[-1]  # 30</code></pre>
+  <p><code>name = value</code> связывает имя со значением. В list положительный index идёт слева с нуля, а <code>-1</code> означает последний элемент.</p>
+  <div class="quiz" data-quiz data-correct="Да: -1 — последний элемент, то есть 30." data-wrong="Отрицательный index считает с конца: -1 — последний элемент."><p><strong>Что вернёт <code>dpd[-1]</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>0</code></button><button class="choice" data-answer="wrong"><code>10</code></button><button class="choice" data-answer="correct"><code>30</code></button><button class="choice" data-answer="wrong">Ошибка</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Верно: кавычки делают C014 value типа str." data-wrong="Смотрите на запись value: кавычки обозначают str."><p><strong>Какой type у <code>client_id = "C014"</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>int</code></button><button class="choice" data-answer="correct"><code>str</code></button><button class="choice" data-answer="wrong"><code>float</code></button><button class="choice" data-answer="wrong"><code>bool</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen" id="nested">
+  <p class="eyebrow">2 · Realistic structure</p><h2>Читаем nested dict / list слева направо</h2>
+  <pre><code>loan = {
+    "loan_id": "L001",
+    "client": {
+        "client_id": "C001",
+        "segment": "prime"
+    },
+    "risk": {
+        "score": 642,
+        "bad_rate": 0.07,
+        "flags": ["repeat", "high_utilization"]
+    },
+    "payments": [
+        {"date": "2026-08-01", "amount": 1500},
+        {"date": "2026-08-15", "amount": 2000}
+    ],
+    "is_active": True
+}</code></pre>
+  <p>Каждая пара brackets делает один шаг: key в <code>dict</code> или index в <code>list</code>. Читайте chain как путь по данным.</p>
+  <div class="path-grid">
+    <code>loan["loan_id"]</code><span>→</span><strong>"L001"</strong>
+    <code>loan["client"]["segment"]</code><span>→</span><strong>"prime"</strong>
+    <code>loan["risk"]["score"]</code><span>→</span><strong>642</strong>
+    <code>loan["risk"]["flags"][0]</code><span>→</span><strong>"repeat"</strong>
+    <code>loan["payments"][1]["amount"]</code><span>→</span><strong>2000</strong>
+  </div>
+  <div class="quiz" data-quiz data-correct="Верно: risk → flags → первый item даёт repeat." data-wrong="Идите по chain: dict risk, list flags, index 0."><p><strong>Результат <code>loan["risk"]["flags"][0]</code>?</strong></p><div class="choices"><button class="choice" data-answer="correct"><code>"repeat"</code></button><button class="choice" data-answer="wrong"><code>642</code></button><button class="choice" data-answer="wrong"><code>"prime"</code></button><button class="choice" data-answer="wrong"><code>2000</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Точно: payments[1] — второй dict, затем key amount — 2000." data-wrong="Сначала выберите второй payment по index 1, потом его amount."><p><strong>Как получить amount второго payment?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>loan["payments"][0]</code></button><button class="choice" data-answer="correct"><code>loan["payments"][1]["amount"]</code></button><button class="choice" data-answer="wrong"><code>loan["amount"][1]</code></button><button class="choice" data-answer="wrong"><code>loan[1]["payments"]</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Да: после payments находится list, потому что value начинается с [." data-wrong="Смотрите на brackets сразу после key payments: [ создаёт list."><p><strong>Что хранится под key <code>payments</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Один <code>float</code></button><button class="choice" data-answer="wrong">Один <code>dict</code></button><button class="choice" data-answer="correct"><code>list</code> из <code>dict</code></button><button class="choice" data-answer="wrong"><code>str</code> из dates</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen" id="logic">
+  <p class="eyebrow">3 · Decision logic</p><h2>Operators и <code>if</code></h2>
+  <div class="operator-strip"><code>&gt;</code><code>&lt;</code><code>&gt;=</code><code>&lt;=</code><code>==</code><code>!=</code><code>and</code><code>or</code><code>not</code></div>
+  <p>Comparisons дают <code>True</code> или <code>False</code>. <code>and</code> требует оба условия; <code>or</code> — хотя бы одно; <code>not</code> переворачивает boolean.</p>
+  <pre><code>if loan["risk"]["score"] &lt; 600:
+    print("high risk")</code></pre>
+  <p>Двоеточие открывает block. Четыре пробела indentation показывают, что <code>print</code> принадлежит этому <code>if</code> и выполняется только при true condition. Здесь score равен 642, поэтому текст не появится.</p>
+  <div class="quiz" data-quiz data-correct="Верно: 642 &lt; 600 — False, block пропускается." data-wrong="Подставьте score 642: условие 642 &lt; 600 ложно."><p><strong>Что напечатает этот <code>if</code> для текущего loan?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>high risk</code></button><button class="choice" data-answer="correct">Ничего</button><button class="choice" data-answer="wrong"><code>642</code></button><button class="choice" data-answer="wrong"><code>False</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Да: оба comparison должны быть True." data-wrong="Operator and требует истинности левого и правого conditions."><p><strong>Что означает <code>score &lt; 650 and is_active</code>?</strong></p><div class="choices"><button class="choice" data-answer="correct">Оба условия истинны</button><button class="choice" data-answer="wrong">Хотя бы одно истинно</button><button class="choice" data-answer="wrong">Условия не равны</button><button class="choice" data-answer="wrong">Первое отрицается</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Верно: != читается «не равно»." data-wrong="Оператор != проверяет, что значения различаются."><p><strong>Как прочитать <code>segment != "prime"</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong">segment равен prime</button><button class="choice" data-answer="correct">segment не равен prime</button><button class="choice" data-answer="wrong">segment больше prime</button><button class="choice" data-answer="wrong">segment отсутствует</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen" id="flow">
+  <p class="eyebrow">4 · Повторение и reusable logic</p><h2><code>for</code> и function</h2>
+  <pre><code>for payment in loan["payments"]:
+    print(payment["amount"])</code></pre>
+  <p>Читайте: «для каждого <code>payment</code> в list payments выполни indented block». На каждой iteration временное имя <code>payment</code> указывает на следующий dict.</p>
+  <div class="quiz" data-quiz data-correct="Да: loop проходит два dict и печатает amount каждого." data-wrong="В payments два элемента; print выполняется один раз для каждого."><p><strong>Что появится по порядку?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>1500</code></button><button class="choice" data-answer="correct"><code>1500</code>, затем <code>2000</code></button><button class="choice" data-answer="wrong"><code>2000</code>, затем <code>1500</code></button><button class="choice" data-answer="wrong">Два date</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <pre><code>def is_bad(dpd):
+    return dpd &gt;= 30
+
+is_bad(35)  # True</code></pre>
+  <div class="flow-diagram"><span>input <code>35</code></span><b>→</b><span><code>is_bad</code><br><small>35 &gt;= 30</small></span><b>→</b><span>return <code>True</code></span></div>
+  <p><code>def</code> создаёт function; <code>dpd</code> — имя input внутри неё; <code>return</code> отдаёт result вызывающему code.</p>
+  <div class="quiz" data-quiz data-correct="Верно: 10 >= 30 даёт False, и function возвращает False." data-wrong="Подставьте input 10 в expression dpd >= 30."><p><strong>Что вернёт <code>is_bad(10)</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>10</code></button><button class="choice" data-answer="wrong"><code>30</code></button><button class="choice" data-answer="wrong"><code>True</code></button><button class="choice" data-answer="correct"><code>False</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Точно: return передаёт result наружу из function." data-wrong="print показывает значение, а return отдаёт result вызывающему code."><p><strong>Роль <code>return</code> здесь?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Печатает result</button><button class="choice" data-answer="wrong">Повторяет function</button><button class="choice" data-answer="correct">Возвращает result</button><button class="choice" data-answer="wrong">Импортирует function</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen" id="pandas">
+  <p class="eyebrow">5 · Bridge</p><h2>От records к <code>DataFrame</code></h2>
+  <pre><code>import pandas as pd</code></pre>
+  <p><code>import</code> подключает library <code>pandas</code>; <code>as pd</code> задаёт короткий alias. Поэтому <code>pd.DataFrame</code> означает: «возьми constructor <code>DataFrame</code> из pandas».</p>
+  <div class="quiz" data-quiz data-correct="Верно: pd — принятый короткий alias для pandas." data-wrong="Часть as pd назначает library короткое имя pd."><p><strong>Что такое <code>pd</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Новая таблица</button><button class="choice" data-answer="correct">Alias библиотеки</button><button class="choice" data-answer="wrong">Column данных</button><button class="choice" data-answer="wrong">Python type</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <pre><code>loans = [
+    {"loan_id": "L001", "dpd": 0,  "balance": 10000},
+    {"loan_id": "L002", "dpd": 35, "balance": 7000},
+    {"loan_id": "L003", "dpd": 10, "balance": 12000}
+]
+
+df = pd.DataFrame(loans)</code></pre>
+  <div class="transformation" aria-label="Преобразование list of dicts в таблицу">
+    <div><strong>Python</strong><p><code>list</code> = набор records</p><p><code>dict</code> = один record</p><p>key = field name</p></div><b aria-hidden="true">→</b>
+    <div><strong>Pandas</strong><p><code>DataFrame</code> = table</p><p>каждый dict = row</p><p>keys = columns</p></div>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>loan_id</th><th>dpd</th><th>balance</th></tr></thead><tbody><tr><td>L001</td><td>0</td><td>10000</td></tr><tr><td>L002</td><td>35</td><td>7000</td></tr><tr><td>L003</td><td>10</td><td>12000</td></tr></tbody></table></div>
+  <div class="quiz" data-quiz data-correct="Да: каждый dict становится row, поэтому rows три." data-wrong="Посчитайте dict внутри внешнего list: их три."><p><strong>Сколько rows будет в <code>df</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Одна</button><button class="choice" data-answer="wrong">Две</button><button class="choice" data-answer="correct">Три</button><button class="choice" data-answer="wrong">Девять</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Верно: dict keys задают column names." data-wrong="Keys повторяются в records и становятся headers таблицы."><p><strong>Откуда взялись column names?</strong></p><div class="choices"><button class="choice" data-answer="correct">Из keys каждого dict</button><button class="choice" data-answer="wrong">Из values первого dict</button><button class="choice" data-answer="wrong">Из имени loans</button><button class="choice" data-answer="wrong">Из alias pd</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Точно: record L002 содержит balance 7000." data-wrong="Найдите dict с loan_id L002 и прочитайте его balance."><p><strong>Какой balance окажется в row L002?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>0</code></button><button class="choice" data-answer="wrong"><code>35</code></button><button class="choice" data-answer="correct"><code>7000</code></button><button class="choice" data-answer="wrong"><code>12000</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen compact-screen" id="checkpoint">
+  <p class="eyebrow">Финиш · Один chat checkpoint</p><h2>Соберите весь bridge</h2>
+  <div class="quiz" data-quiz data-correct="Верно: list содержит records, а DataFrame превращает их в table." data-wrong="Внешние [] — list, каждый {} — record; DataFrame строит table."><p><strong>Какой mental model верный?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Dict = table, key = row</button><button class="choice" data-answer="correct">List = records, dict = row</button><button class="choice" data-answer="wrong">Function = column, input = row</button><button class="choice" data-answer="wrong">Import = filter, alias = mask</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="card lesson-complete" data-completion hidden>
+    <h2>Bridge пройден</h2><p>Отправьте в чат <strong>один итоговый ответ</strong>, не ответы на все checks:</p>
+    <pre><code>bad_loans = []
+for row in loans:
+    if is_bad(row["dpd"]):
+        bad_loans.append(row)
+
+bad_df = pd.DataFrame(bad_loans)</code></pre>
+    <p>Объясните своими словами: <strong>что попадает в <code>bad_loans</code>, сколько rows будет в <code>bad_df</code> и почему?</strong></p>
+    <p>После checkpoint переходим сразу к <strong>Pandas Core I</strong>.</p>
+  </div>
+</section>
+<section class="sources"><h2>Primary sources</h2><p><a href="https://docs.python.org/3/tutorial/introduction.html#lists">Python Tutorial: Lists</a>, <a href="https://docs.python.org/3/tutorial/datastructures.html#dictionaries">Dictionaries</a>, <a href="https://docs.python.org/3/tutorial/controlflow.html">Control Flow</a> и <a href="https://docs.python.org/3/tutorial/modules.html">Modules</a>.</p><p><a href="https://pandas.pydata.org/docs/getting_started/intro_tutorials/01_table_oriented.html">pandas: What kind of data does pandas handle?</a>. Для повторения: <a href="../reference/python-basics.html">Python basics reference</a>.</p></section>
+<footer><p>Если непонятен один конкретный chain или operator, спросите агента. Иначе завершите все checks и пришлите только итоговый checkpoint.</p></footer>
+</main><script src="../assets/lesson.js"></script>
+</body></html>

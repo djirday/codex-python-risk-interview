@@ -13,8 +13,9 @@
 - Один интенсивный день; ориентир: 55–60% Pandas, 10–15% Parquet/DuckDB, около 10% pyodbc/SQL integration, 20–25% Risk/Portfolio и interview practice.
 - Учащийся не Python developer: SQL и risk/portfolio business logic ближе, Pandas известен фрагментарно.
 - Обучение на русском; syntax, APIs и professional terms — на English; примеры только в credit/fintech/portfolio context.
-- Один ускоренный Block 0 (60–90 минут) с абсолютного нуля, затем восемь прикладных блоков; основной формат — короткие интерактивные HTML lessons, а не длинные объяснения в чате.
+- FAST TRACK: один насыщенный переходный lesson Python Foundations → Pandas (30–45 минут), затем крупные прикладные lessons; основной формат — интерактивный HTML с immediate feedback, а не длинные объяснения в чате.
 - Python syntax — старт с нуля; Risk/Portfolio и табличное мышление — сильный business context. Эти две оси уровня оцениваются отдельно.
+- Цель первого дня — широкая рабочая карта и способность читать аналитический code; детали syntax закрепляются позднее и только там, где evidence показывает проблему.
 
 ## Out of scope
 - Глубокое ООП, recursion, metaclasses, сложные decorators, LeetCode и web development.

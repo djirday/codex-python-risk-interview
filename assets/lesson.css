@@ -94,3 +94,23 @@ a { color: #075fa8; }
   .progress-shell, .quiz, .lesson-nav { display: none; }
   .screen { min-height: auto; break-inside: avoid; padding: 24px 0; }
 }
+
+/* Dense FAST TRACK lesson components */
+.compact-screen { min-height: auto; }
+.route-map { padding: 20px 24px; }
+.path-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(100px, .45fr); gap: 10px 16px; align-items: center; margin: 28px 0; }
+.operator-strip { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0; }
+.operator-strip code { padding: 8px 12px; font-size: 1.1rem; }
+.flow-diagram, .transformation { display: flex; align-items: stretch; justify-content: center; gap: 18px; margin: 28px 0; }
+.flow-diagram span, .transformation div { flex: 1; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); text-align: center; }
+.flow-diagram b, .transformation > b { align-self: center; color: var(--accent); font-size: 1.7rem; }
+.table-wrap { overflow-x: auto; margin: 28px 0; }
+table { width: 100%; border-collapse: collapse; background: var(--card); }
+th, td { padding: 13px 16px; border: 1px solid var(--line); text-align: left; }
+th { background: var(--accent-soft); }
+@media (max-width: 620px) {
+  .path-grid { grid-template-columns: minmax(0, 1fr) auto; }
+  .path-grid strong { grid-column: 1 / -1; margin-bottom: 10px; }
+  .flow-diagram, .transformation { flex-direction: column; }
+  .flow-diagram b, .transformation > b { transform: rotate(90deg); }
+}

@@ -14,8 +14,20 @@ loan_id = "L001"         # str
 is_overdue = True        # bool</code></pre><p><code>int</code> — целое число, <code>float</code> — число с дробной частью, <code>str</code> — текст в кавычках, <code>bool</code> — <code>True</code> или <code>False</code>. Кавычки превращают даже запись <code>"30"</code> в текст.</p></section>
   <section class="screen"><h2>List и dict</h2><pre><code>dpd_history = [0, 10, 35]
 dpd_history[1]            # 10
+dpd_history[-1]           # 35
 
 loan = {"segment": "prime", "mob": 6}
 loan["mob"]               # 6</code></pre><p><code>list</code> хранит упорядоченные значения; index начинается с <code>0</code>. <code>dict</code> хранит пары <code>key: value</code>; value выбирают по key.</p></section>
+  <section class="screen"><h2>Control flow и function</h2><pre><code>if score &lt; 600:
+    print("high risk")
+
+for payment in loan["payments"]:
+    print(payment["amount"])
+
+def is_bad(dpd):
+    return dpd &gt;= 30</code></pre><p>Indented block принадлежит <code>if</code>, <code>for</code> или function. <code>return</code> отдаёт result function.</p></section>
+  <section class="screen"><h2>Pandas bridge</h2><pre><code>import pandas as pd
+
+df = pd.DataFrame(loans)</code></pre><p><code>pd</code> — alias библиотеки pandas. В list of dicts каждый dict становится row, а его keys — columns нового <code>DataFrame</code>.</p></section>
   <section class="sources"><h2>Источник</h2><p><a href="https://docs.python.org/3/tutorial/introduction.html">Официальный Python Tutorial: An Informal Introduction to Python</a>.</p></section>
 </main></body></html>
