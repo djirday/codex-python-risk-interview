@@ -5,6 +5,15 @@
 <h1>DataFrame: увидеть таблицу и выбрать рискованные loans</h1>
 <p><strong>Тangible win:</strong> прочитать маленький portfolio dataset, понять разницу между <code>DataFrame</code> и <code>Series</code>, проверить данные и написать первый boolean filter.</p>
 
+<section class="callout">
+<h2>Старт с нулевого уровня</h2>
+<p>Не нужно понимать весь код на странице и пока не нужно ничего писать с нуля. Начнём с одной строки:</p>
+<pre><code>print(df["dpd"])</code></pre>
+<p>Читайте её изнутри наружу: <code>df</code> — имя таблицы; <code>["dpd"]</code> просит взять из неё column <code>dpd</code>; <code>print(...)</code> просит показать выбранные значения на экране.</p>
+<p><strong>Микро-задание:</strong> посмотрите на таблицу в разделе «До» и напишите только, какие пять чисел эта строка покажет и в каком порядке. Это не экзамен: ответ можно дать обычным текстом без Python code.</p>
+<p>После ответа разберём результат и только потом перейдём к следующему обозначению. Большое exercise ниже пока выполнять не нужно.</p>
+</section>
+
 <h2>Mental model</h2>
 <p><code>DataFrame</code> — двумерная таблица: rows — наблюдения (здесь loans), columns — признаки. Одна column, например <code>df["dpd"]</code>, обычно является <code>Series</code>: одномерным набором значений с тем же index. Index — метки строк, а не business key; <code>loan_id</code> остаётся отдельной business column, пока вы явно не сделали иначе.</p>
 <div class="callout"><strong>Как читать цепочку:</strong> начинайте с объекта слева (<code>df</code>), затем проговаривайте каждую пару квадратных скобок. Не угадывайте результат — следите, выбираются columns или rows.</div>
@@ -58,7 +67,7 @@ watchlist = df.loc[
 <p><strong>Зачем:</strong> это простая collection watchlist: loans с <code>30+ DPD</code> и положительным outstanding balance. L105 имеет <code>31 DPD</code>, но balance равен нулю, поэтому исключён — business definition фильтра имеет значение.</p>
 <p><strong>Собеседование:</strong> «Почему вы использовали <code>&amp;</code>, а не <code>and</code>, и зачем parentheses?» Сильный ответ описывает element-wise combination двух boolean Series и operator precedence.</p>
 
-<h2>Первое exercise — ответьте без запуска solution</h2>
+<h2>Первое полное exercise — пока отложено</h2>
 <div class="exercise">
 <p>Используя <code>df</code> выше, напишите <strong>2–4 строки Pandas</strong>, которые создают <code>new_risk</code>:</p>
 <ul>
