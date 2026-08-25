@@ -1,10 +1,10 @@
 # Course State
 
-- **Текущий этап:** Block 0 — Python Foundations; интерактивный Lesson 0003 по `list` и `dict` готов к прохождению.
-- **Завершённые уроки:** Lessons 0001 «Как читать Python» и 0002 «Basic value types» завершены; понимание подтверждено ответами в чате.
-- **Последний выполненный exercise:** учащийся верно определил `mob = 6` как `int`, `bad_rate = 0.07` как `float`, `segment = "prime"` как `str` и `is_active = True` как `bool`, объяснив признаки каждого type.
-- **Уже продемонстрировано:** mental model «имя → значение»; смысл assignment (`=`), кавычек и `print(...)`; различение `int`, `float`, `str`, `bool`; сильный conceptual SQL/table и Risk/Portfolio business context заявлен.
-- **Слабые места / нужно проверить:** чтение контейнеров `list` и `dict`, различие доступа по позиции и по key.
-- **Следующий рекомендуемый шаг:** открыть `lessons/0003-list-and-dict.html`, пройти интерактивные проверки и объяснить финальные два выражения своими словами.
-- **Незаконченные задачи:** дождаться evidence по Lesson 0003; затем создать Lesson 0004 про conditions. Pandas и Blocks 1–8 ещё не начаты.
+- **Текущий этап:** FAST TRACK — переходный Lesson 0004 «Python Foundations → Pandas Bridge» готов к прохождению.
+- **Завершённые уроки:** Lessons 0001–0003 завершены; понимание подтверждено ответами в чате.
+- **Последний выполненный exercise:** учащийся верно объяснил, что `rates[1]` возвращает второй элемент `0.07` из-за zero-based indexing, а `client["mob"]` возвращает integer `6` по key.
+- **Уже продемонстрировано:** assignment/`print`, basic types, чтение `list` и `dict`, различие index и key; сильный conceptual SQL/table и Risk/Portfolio context; способность быстро осваивать notation.
+- **Калибровка темпа:** Python syntax beginner + technically experienced analyst. Микро-этап Foundations завершён; включён FAST TRACK с lessons по 25–45 минут и одним итоговым chat checkpoint.
+- **Следующий рекомендуемый шаг:** открыть `lessons/0004-python-foundations-pandas-bridge.html`, пройти все immediate-feedback checks и прислать только итоговый ответ из финального checkpoint.
+- **После checkpoint:** создать один насыщенный Lesson 0005 «Pandas Core I»; не продолжать отдельные lessons по общему Python.
 - **Checkpoint date:** 2026-08-25.
