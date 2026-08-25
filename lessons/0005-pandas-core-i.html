@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0005 — Pandas Core I</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body data-lesson="lesson-0005">
+<div class="progress-shell" role="progressbar" aria-label="Прогресс урока" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar" data-progress></div></div>
+<main>
+<nav class="lesson-nav" aria-label="Навигация урока"><a href="0004-python-foundations-pandas-bridge.html">← Lesson 0004</a><span>FAST TRACK · 30–45 минут · 16 checks</span></nav>
+<section class="screen compact-screen">
+  <p class="eyebrow">Pandas Core I</p><h1>От loan tape к risk view</h1>
+  <p class="lead">Один analyst workflow: быстро inspect таблицу, выбрать columns и rows, создать metric, проверить missing values и отсортировать результат.</p>
+  <div class="card route-map"><strong>Карта:</strong> create → inspect → select → filter → derive → missing → sort → explain</div>
+  <p class="status-pill" data-saved-status hidden>Этот урок уже пройден в этом browser</p>
+</section>
+<section class="screen compact-screen" id="setup">
+  <p class="eyebrow">1 · Dataset и mental model</p><h2>Один <code>DataFrame</code>, один row grain</h2>
+  <pre><code>import pandas as pd
+
+loans = pd.DataFrame({
+    "loan_id": ["L001", "L002", "L003", "L004", "L005"],
+    "segment": ["prime", "near_prime", "prime", "near_prime", "prime"],
+    "dpd": [0, 35, 10, 65, 40],
+    "balance": [10000, 7000, 12000, 5000, 8000],
+    "limit": [15000, 8000, 15000, 6000, None]
+})</code></pre>
+  <p><strong>Grain:</strong> одна row = один loan на reporting date. Без ясного grain нельзя безопасно считать portfolio metrics.</p>
+  <div class="table-wrap"><table><thead><tr><th>loan_id</th><th>segment</th><th>dpd</th><th>balance</th><th>limit</th></tr></thead><tbody><tr><td>L001</td><td>prime</td><td>0</td><td>10000</td><td>15000</td></tr><tr><td>L002</td><td>near_prime</td><td>35</td><td>7000</td><td>8000</td></tr><tr><td>L003</td><td>prime</td><td>10</td><td>12000</td><td>15000</td></tr><tr><td>L004</td><td>near_prime</td><td>65</td><td>5000</td><td>6000</td></tr><tr><td>L005</td><td>prime</td><td>40</td><td>8000</td><td>NaN</td></tr></tbody></table></div>
+  <div class="quiz" data-quiz data-correct="Верно: declared grain — один loan на reporting date." data-wrong="Grain описывает, что представляет одна row."><p><strong>Что представляет одна row?</strong></p><div class="choices"><button class="choice" data-answer="correct">Один loan</button><button class="choice" data-answer="wrong">Один segment</button><button class="choice" data-answer="wrong">Один payment</button><button class="choice" data-answer="wrong">Один portfolio</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Да: в таблице пять loan records." data-wrong="Посчитайте значения в loan_id или видимые rows."><p><strong>Какой <code>loans.shape</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>(4, 5)</code></button><button class="choice" data-answer="correct"><code>(5, 5)</code></button><button class="choice" data-answer="wrong"><code>(5, 4)</code></button><button class="choice" data-answer="wrong"><code>(25,)</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen" id="inspect">
+  <p class="eyebrow">2 · Inspect before transform</p><h2>Размер, sample, schema</h2>
+  <pre><code>loans.shape       # (5, 5)
+loans.head(3)     # первые 3 rows
+loans.dtypes      # type каждой column
+loans.info()      # columns, non-null counts, dtypes</code></pre>
+  <p><code>shape</code> — attribute, поэтому без parentheses. <code>head(...)</code> и <code>info()</code> — methods. На interview сначала назовите grain, затем проверьте row count, schema и nulls.</p>
+  <div class="quiz" data-quiz data-correct="Точно: shape хранит пару (rows, columns)." data-wrong="Порядок shape: сначала rows, затем columns."><p><strong>Что означает второй <code>5</code> в <code>(5, 5)</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Пять nulls</button><button class="choice" data-answer="wrong">Пять types</button><button class="choice" data-answer="correct">Пять columns</button><button class="choice" data-answer="wrong">Пять segments</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Верно: info показывает non-null counts и помогает заметить missing limit." data-wrong="Нужен overview schema и non-null counts, а не только sample."><p><strong>Чем быстрее заметить missing <code>limit</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>loans.shape</code></button><button class="choice" data-answer="wrong"><code>loans.head()</code></button><button class="choice" data-answer="correct"><code>loans.info()</code></button><button class="choice" data-answer="wrong"><code>loans.sort()</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen" id="select">
+  <p class="eyebrow">3 · Select columns</p><h2><code>Series</code> или <code>DataFrame</code></h2>
+  <pre><code>loans["dpd"]                 # одна column → Series
+loans[["loan_id", "dpd"]]  # list columns → DataFrame</code></pre>
+  <p>Одна пара brackets выбирает column label. Внутренняя list во втором выражении говорит: «верни набор columns» — поэтому result остаётся двухмерной table.</p>
+  <div class="quiz" data-quiz data-correct="Да: выбор одной column возвращает Series." data-wrong="Один label даёт одномерный Series."><p><strong>Type результата <code>loans["dpd"]</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>dict</code></button><button class="choice" data-answer="correct"><code>Series</code></button><button class="choice" data-answer="wrong"><code>DataFrame</code></button><button class="choice" data-answer="wrong"><code>list</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Верно: внутренняя list задаёт две columns и сохраняет DataFrame." data-wrong="Для нескольких columns передайте list labels внутри brackets."><p><strong>Как оставить <code>loan_id</code> и <code>balance</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>loans["loan_id", "balance"]</code></button><button class="choice" data-answer="correct"><code>loans[["loan_id", "balance"]]</code></button><button class="choice" data-answer="wrong"><code>loans("loan_id", "balance")</code></button><button class="choice" data-answer="wrong"><code>loans{"loan_id", "balance"}</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen" id="filter">
+  <p class="eyebrow">4 · Boolean filtering</p><h2>Condition → mask → rows</h2>
+  <pre><code>mask = loans["dpd"] >= 30
+bad = loans.loc[mask, ["loan_id", "segment", "dpd", "balance"]]</code></pre>
+  <div class="transformation"><div><strong>Condition</strong><p><code>dpd >= 30</code></p></div><b>→</b><div><strong>Boolean mask</strong><p>False, True, False, True, True</p></div><b>→</b><div><strong>Selected rows</strong><p>L002, L004, L005</p></div></div>
+  <p><code>.loc[rows, columns]</code> выбирает по labels/boolean mask: до comma — rows, после comma — columns. Скобки не меняют <code>loans</code>; result присваивается новому имени.</p>
+  <div class="quiz" data-quiz data-correct="Верно: threshold проходят L002, L004 и L005." data-wrong="Сравните каждый dpd с 30, включая boundary."><p><strong>Сколько <code>True</code> содержит mask?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Один</button><button class="choice" data-answer="wrong">Два</button><button class="choice" data-answer="correct">Три</button><button class="choice" data-answer="wrong">Пять</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Да: and для Series записывается &, а conditions заключаются в parentheses." data-wrong="В pandas element-wise AND — &, с parentheses вокруг каждого condition."><p><strong>Как выбрать bad loans только <code>prime</code>?</strong></p><div class="choices"><button class="choice" data-answer="correct"><code>(loans["dpd"] >= 30) &amp; (loans["segment"] == "prime")</code></button><button class="choice" data-answer="wrong"><code>loans["dpd"] >= 30 and loans["segment"] == "prime"</code></button><button class="choice" data-answer="wrong"><code>(loans["dpd"] >= 30) | (loans["segment"] == "prime")</code></button><button class="choice" data-answer="wrong"><code>loans["dpd"] >= (30 &amp; loans["segment"])</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Точно: .loc получает row mask до comma и column labels после." data-wrong="Читайте .loc как [rows, columns]."><p><strong>Что находится после comma в <code>.loc</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Row numbers</button><button class="choice" data-answer="correct">Column labels</button><button class="choice" data-answer="wrong">Boolean values</button><button class="choice" data-answer="wrong">Method names</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen" id="derive">
+  <p class="eyebrow">5 · Derived columns</p><h2>Vectorized calculation</h2>
+  <pre><code>loans["is_bad"] = loans["dpd"] >= 30
+loans["utilization"] = loans["balance"] / loans["limit"]</code></pre>
+  <p>Pandas применяет operation к aligned values всей <code>Series</code> — explicit <code>for</code> не нужен. <code>is_bad</code> хранит reusable flag, а <code>utilization</code> связывает exposure с limit. Это arithmetic metric, не causal conclusion.</p>
+  <div class="quiz" data-quiz data-correct="Верно: 7000 / 8000 = 0.875." data-wrong="Для L002 разделите balance 7000 на limit 8000."><p><strong><code>utilization</code> L002?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>0.125</code></button><button class="choice" data-answer="wrong"><code>0.800</code></button><button class="choice" data-answer="correct"><code>0.875</code></button><button class="choice" data-answer="wrong"><code>1.143</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Да: comparison создаёт boolean Series и assignment сохраняет её column." data-wrong="Правая часть даёт True/False для каждой row."><p><strong>Какие values хранит <code>is_bad</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Loan IDs</button><button class="choice" data-answer="wrong">DPD numbers</button><button class="choice" data-answer="correct">Boolean flags</button><button class="choice" data-answer="wrong">Segment names</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen" id="missing">
+  <p class="eyebrow">6 · Missing values</p><h2>Сначала measure, потом policy</h2>
+  <pre><code>loans["limit"].isna().sum()       # 1
+loans["utilization"].isna().sum() # 1</code></pre>
+  <p><code>isna()</code> отмечает missing values, <code>sum()</code> считает <code>True</code>. Missing limit распространяется в division: для L005 utilization тоже <code>NaN</code>. Не заменяйте limit на zero автоматически — это business assumption и zero создаст проблему division.</p>
+  <div class="quiz" data-quiz data-correct="Верно: missing input даёт missing derived result." data-wrong="У L005 неизвестен denominator limit."><p><strong>Почему utilization L005 равен <code>NaN</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Balance равен zero</button><button class="choice" data-answer="correct">Limit отсутствует</button><button class="choice" data-answer="wrong">DPD слишком высокий</button><button class="choice" data-answer="wrong">Segment равен prime</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Точно: сначала quantification, затем документированное business rule." data-wrong="Imputation без понимания причины создаёт скрытое assumption."><p><strong>Безопасный первый шаг для nulls?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Сразу заменить zero</button><button class="choice" data-answer="correct">Посчитать и исследовать</button><button class="choice" data-answer="wrong">Удалить всю table</button><button class="choice" data-answer="wrong">Игнорировать silently</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen" id="sort">
+  <p class="eyebrow">7 · Rank the risk view</p><h2><code>sort_values</code> и проверка результата</h2>
+  <pre><code>review = (
+    loans.loc[loans["is_bad"], ["loan_id", "dpd", "balance"]]
+         .sort_values("balance", ascending=False)
+)
+
+review.shape           # (3, 3)
+review["balance"].sum() # 20000</code></pre>
+  <p>Parentheses позволяют читать chain по стадиям. Сначала filter, затем sort descending. Итоговая validation проверяет ожидаемые rows и total bad balance; original index может остаться 4, 1, 3 — это labels, не row count.</p>
+  <div class="quiz" data-quiz data-correct="Верно: descending balance даёт L005, L002, L004." data-wrong="Сравните balances bad loans: 8000, 7000, 5000."><p><strong>Какой порядок <code>loan_id</code> в review?</strong></p><div class="choices"><button class="choice" data-answer="correct">L005, L002, L004</button><button class="choice" data-answer="wrong">L002, L004, L005</button><button class="choice" data-answer="wrong">L004, L002, L005</button><button class="choice" data-answer="wrong">L001, L003, L005</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Да: 8000 + 7000 + 5000 = 20000." data-wrong="Сложите balance трёх rows, прошедших dpd threshold."><p><strong>Total balance в <code>review</code>?</strong></p><div class="choices"><button class="choice" data-answer="wrong"><code>12000</code></button><button class="choice" data-answer="wrong"><code>15000</code></button><button class="choice" data-answer="correct"><code>20000</code></button><button class="choice" data-answer="wrong"><code>42000</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+<section class="screen compact-screen" id="checkpoint">
+  <p class="eyebrow">8 · Финиш · Один chat checkpoint</p><h2>Объясните pipeline как на interview</h2>
+  <div class="quiz" data-quiz data-correct="Верно: проверяем grain/schema/nulls, transform и затем result." data-wrong="Надёжный workflow начинается inspect и заканчивается validation."><p><strong>Какой порядок работы безопаснее?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Sort → delete → inspect</button><button class="choice" data-answer="correct">Inspect → transform → validate</button><button class="choice" data-answer="wrong">Fill → assume → report</button><button class="choice" data-answer="wrong">Filter → ignore → export</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="card lesson-complete" data-completion hidden>
+    <h2>Pandas Core I пройден</h2><p>Отправьте в чат <strong>один итоговый ответ</strong>, не ответы на все checks:</p>
+    <pre><code>bad_prime = loans.loc[
+    (loans["dpd"] >= 30) &amp; (loans["segment"] == "prime"),
+    ["loan_id", "balance", "limit"]
+].copy()
+
+bad_prime["utilization"] = bad_prime["balance"] / bad_prime["limit"]</code></pre>
+    <p>Объясните своими словами: <strong>какие rows попадут в <code>bad_prime</code>, чему равен <code>utilization</code> и какой data-quality risk нужно назвать?</strong></p>
+    <p>После checkpoint перейдём к <strong>Pandas Core II</strong>: <code>groupby</code>, <code>merge</code>, duplicates и validation.</p>
+  </div>
+</section>
+<section class="sources"><h2>Primary sources</h2><p><a href="https://pandas.pydata.org/docs/getting_started/intro_tutorials/01_table_oriented.html">pandas: What kind of data does pandas handle?</a>, <a href="https://pandas.pydata.org/docs/getting_started/intro_tutorials/03_subset_data.html">How do I select a subset?</a>, <a href="https://pandas.pydata.org/docs/getting_started/intro_tutorials/05_add_columns.html">How to create new columns?</a> и <a href="https://pandas.pydata.org/docs/user_guide/missing_data.html">Working with missing data</a>.</p><p>Короткое повторение bridge: <a href="../reference/python-basics.html">Python basics reference</a>.</p></section>
+<footer><p>Если один operator или method непонятен, спросите агента. Иначе завершите 16 checks и пришлите только итоговый checkpoint.</p></footer>
+</main><script src="../assets/lesson.js"></script>
+</body></html>
