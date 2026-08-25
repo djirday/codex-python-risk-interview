@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0001 — Как читать Python</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body data-lesson="lesson-0001">
+<div class="progress-shell" role="progressbar" aria-label="Прогресс урока" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar" data-progress></div></div>
+<main>
+  <nav class="lesson-nav" aria-label="Навигация урока"><span>Block 0 · Lesson 1 из 5</span><span>≈ 10 минут</span></nav>
+
+  <section class="screen">
+    <p class="eyebrow">Python с абсолютного нуля</p>
+    <h1>Три строки — без страха</h1>
+    <p class="lead">Сегодня только одна способность: увидеть <strong>имя</strong>, <strong>значение</strong> и команду показать значение. Никаких таблиц и сложных терминов.</p>
+    <p class="status-pill" data-saved-status hidden>Этот урок уже пройден в этом browser</p>
+  </section>
+
+  <section class="screen" id="assignment">
+    <p class="eyebrow">1 · Имя и значение</p>
+    <h2>Сохраняем число под именем</h2>
+    <pre><code>dpd = 30</code></pre>
+    <div class="mental-model card">
+      <div><strong>имя</strong><code>dpd</code></div><div class="arrow" aria-hidden="true">←</div><div><strong>значение</strong>число <code>30</code></div>
+    </div>
+    <p>Знак <code>=</code> здесь читаем как: <strong>«сохрани значение справа под именем слева»</strong>.</p>
+    <div class="card" data-parts>
+      <h2>Нажмите на часть строки</h2>
+      <div class="code-parts">
+        <button class="code-part" data-part data-explanation="dpd — имя. По нему мы позже найдём сохранённое значение." aria-pressed="false">dpd</button>
+        <button class="code-part" data-part data-explanation="= сохраняет значение справа под именем слева." aria-pressed="false">=</button>
+        <button class="code-part" data-part data-explanation="30 — число. Для числа кавычки не нужны." aria-pressed="false">30</button>
+      </div>
+      <p class="part-explanation" data-part-output aria-live="polite">Выберите <code>dpd</code>, <code>=</code> или <code>30</code>.</p>
+    </div>
+    <div class="quiz" data-quiz data-correct="Верно: под именем dpd теперь хранится число 30." data-wrong="Не совсем. Слева имя, справа сохраняемое значение.">
+      <h2>Что произошло?</h2>
+      <div class="choices">
+        <button class="choice" data-answer="wrong">Сравнили два числа</button>
+        <button class="choice" data-answer="correct">Сохранили число 30</button>
+        <button class="choice" data-answer="wrong">Напечатали слово dpd</button>
+        <button class="choice" data-answer="wrong">Получили ошибку Python</button>
+      </div>
+      <p class="feedback" data-feedback aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="screen" id="text">
+    <p class="eyebrow">2 · Текст</p>
+    <h2>Кавычки отмечают текст</h2>
+    <pre><code>loan_id = "L001"</code></pre>
+    <p><code>loan_id</code> — имя. <code>"L001"</code> — текстовое значение. Кавычки показывают Python, что внутри находится именно текст; сами кавычки не являются частью loan ID.</p>
+    <button class="reveal-button" data-reveal-button aria-controls="text-breakdown" aria-expanded="false">Разобрать по частям</button>
+    <div class="reveal" id="text-breakdown"><strong><code>loan_id</code></strong> — имя → <strong><code>=</code></strong> — сохранить → <strong><code>"L001"</code></strong> — текст.</div>
+    <div class="quiz" data-quiz data-correct="Верно: L001 — текст, поэтому он записан в кавычках." data-wrong="Посмотрите на кавычки: они отмечают текстовое значение.">
+      <h2>Что здесь является текстом?</h2>
+      <div class="choices">
+        <button class="choice" data-answer="wrong"><code>loan_id</code></button>
+        <button class="choice" data-answer="wrong"><code>=</code></button>
+        <button class="choice" data-answer="correct"><code>"L001"</code></button>
+        <button class="choice" data-answer="wrong"><code>30</code></button>
+      </div>
+      <p class="feedback" data-feedback aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="screen" id="print">
+    <p class="eyebrow">3 · Показать значение</p>
+    <h2><code>print(...)</code> показывает результат</h2>
+    <pre><code>dpd = 30
+print(dpd)</code></pre>
+    <p><code>print</code> — готовая функция Python. Круглые скобки содержат то, что мы просим показать. Здесь внутри имя <code>dpd</code>, поэтому Python находит сохранённое значение и показывает <code>30</code>.</p>
+    <div class="quiz" data-quiz data-correct="Верно: Python найдёт значение имени dpd и покажет 30." data-wrong="print получает имя dpd, находит его значение и показывает это значение.">
+      <h2>Что появится на экране?</h2>
+      <div class="choices">
+        <button class="choice" data-answer="wrong"><code>dpd</code></button>
+        <button class="choice" data-answer="correct"><code>30</code></button>
+        <button class="choice" data-answer="wrong"><code>"30"</code></button>
+        <button class="choice" data-answer="wrong"><code>ошибка</code></button>
+      </div>
+      <p class="feedback" data-feedback aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="screen" id="check">
+    <p class="eyebrow">Финиш · Проверка понимания</p>
+    <h2>Две короткие проверки</h2>
+    <div class="quiz" data-quiz data-correct="Да: сохранили текст L001 под именем loan_id." data-wrong="Сначала прочитайте имя слева, затем значение справа.">
+      <p><strong>Как прочитать <code>loan_id = "L001"</code>?</strong></p>
+      <div class="choices">
+        <button class="choice" data-answer="correct">Сохранили текст L001</button>
+        <button class="choice" data-answer="wrong">Показали текст L001</button>
+        <button class="choice" data-answer="wrong">Сравнили два loan ID</button>
+        <button class="choice" data-answer="wrong">Создали число L001</button>
+      </div>
+      <p class="feedback" data-feedback aria-live="polite"></p>
+    </div>
+    <div class="quiz" data-quiz data-correct="Верно: print показывает текущее значение имени loan_id." data-wrong="Внутри скобок указано имя; print показывает сохранённое под ним значение.">
+      <p><strong>Что делает <code>print(loan_id)</code>?</strong></p>
+      <div class="choices">
+        <button class="choice" data-answer="wrong">Сохраняет новый loan ID</button>
+        <button class="choice" data-answer="wrong">Меняет значение loan ID</button>
+        <button class="choice" data-answer="correct">Показывает значение loan ID</button>
+        <button class="choice" data-answer="wrong">Удаляет значение loan ID</button>
+      </div>
+      <p class="feedback" data-feedback aria-live="polite"></p>
+    </div>
+    <div class="card lesson-complete" data-completion hidden>
+      <h2>Lesson 0001 пройден</h2>
+      <p>Закройте урок и пришлите в чат своими словами смысл трёх строк:</p>
+      <pre><code>dpd = 30
+print(dpd)
+loan_id = "L001"</code></pre>
+      <p>Это будет evidence понимания. Только после ответа откроем Lesson 0002.</p>
+    </div>
+  </section>
+
+  <section class="sources">
+    <h2>Primary source</h2>
+    <p><a href="https://docs.python.org/3/tutorial/introduction.html#using-python-as-a-calculator">Официальный Python Tutorial: числа, текст и assignment</a>. Ссылка оставлена для проверки фактов; читать её сейчас не обязательно.</p>
+    <p><a href="../reference/python-basics.html">Короткая шпаргалка по уже показанному syntax</a>.</p>
+  </section>
+  <footer><p>Если любой символ остался непонятным, задайте агенту один короткий вопрос. Следующий урок ещё не создан намеренно.</p></footer>
+</main>
+<script src="../assets/lesson.js"></script>
+</body>
+</html>
