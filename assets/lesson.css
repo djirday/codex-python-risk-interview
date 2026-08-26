@@ -76,6 +76,12 @@ code { font-family: "SFMono-Regular", Consolas, monospace; }
 .reveal { display: none; margin-top: 16px; padding: 18px; border-left: 4px solid var(--accent); background: var(--accent-soft); }
 .reveal.is-open { display: block; }
 .lesson-complete { text-align: center; }
+.lesson-complete .given { margin: 26px 0; padding: 22px; border-left: 5px solid var(--accent); border-radius: 12px; background: var(--accent-soft); text-align: left; }
+.lesson-complete .given h3 { margin: 0 0 8px; font-size: 1.25rem; }
+.lesson-complete .given .table-wrap { margin: 18px 0; }
+.given { margin: 24px 0; padding: 20px 22px; border-left: 5px solid var(--accent); border-radius: 12px; background: var(--accent-soft); }
+.given h3 { margin: 0 0 8px; font-size: 1.15rem; }
+.given p:last-child { margin-bottom: 0; }
 .status-pill { display: inline-block; padding: 7px 12px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); font-weight: 700; }
 .sources, footer { color: var(--muted); font-size: .9rem; }
 a { color: #075fa8; }

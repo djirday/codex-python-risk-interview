@@ -93,6 +93,12 @@ review["balance"].sum() # 20000</code></pre>
   <div class="quiz" data-quiz data-correct="Верно: проверяем grain/schema/nulls, transform и затем result." data-wrong="Надёжный workflow начинается inspect и заканчивается validation."><p><strong>Какой порядок работы безопаснее?</strong></p><div class="choices"><button class="choice" data-answer="wrong">Sort → delete → inspect</button><button class="choice" data-answer="correct">Inspect → transform → validate</button><button class="choice" data-answer="wrong">Fill → assume → report</button><button class="choice" data-answer="wrong">Filter → ignore → export</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
   <div class="card lesson-complete" data-completion hidden>
     <h2>Pandas Core I пройден</h2><p>Отправьте в чат <strong>один итоговый ответ</strong>, не ответы на все checks:</p>
+    <div class="given" aria-label="Дано для итоговой задачи">
+      <h3>Дано — всё нужное для ответа</h3>
+      <p>Одна row = один loan. Здесь повторены все values, нужные для filter и расчёта:</p>
+      <div class="table-wrap"><table><thead><tr><th>loan_id</th><th>segment</th><th>dpd</th><th>balance</th><th>limit</th></tr></thead><tbody><tr><td>L001</td><td>prime</td><td>0</td><td>10000</td><td>15000</td></tr><tr><td>L002</td><td>near_prime</td><td>35</td><td>7000</td><td>8000</td></tr><tr><td>L003</td><td>prime</td><td>10</td><td>12000</td><td>15000</td></tr><tr><td>L004</td><td>near_prime</td><td>65</td><td>5000</td><td>6000</td></tr><tr><td>L005</td><td>prime</td><td>40</td><td>8000</td><td>NaN</td></tr></tbody></table></div>
+      <p><strong>Formula:</strong> <code>utilization = balance / limit</code>. Missing denominator означает, что ratio нельзя вычислить.</p>
+    </div>
     <pre><code>bad_prime = loans.loc[
     (loans["dpd"] >= 30) &amp; (loans["segment"] == "prime"),
     ["loan_id", "balance", "limit"]

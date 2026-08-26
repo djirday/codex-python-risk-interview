@@ -15,3 +15,4 @@
 - Не создавать отдельные микро-lessons про variable/types/list/dict/indexing/operators/`if`/`for`/function без evidence конкретного затруднения. После Foundations → Pandas Bridge сразу переходить к Pandas.
 - Если 3–5 ответов по теме верны, ускоряться; при ошибках замедляться только на проблемной конструкции. Приоритет — чтение и понимание code, а не идеальное запоминание syntax.
 - Для новых lessons переиспользовать authoritative sources из `RESOURCES.md` и shared assets; не повторять web research, rendering и screenshots без практической необходимости. Делать необходимые HTML/link/JS sanity checks и обновлять state/records один раз на большой lesson.
+- Учащемуся трудно удерживать table values и formulas при прокрутке. Каждый exercise и особенно финальный checkpoint должен быть self-contained: непосредственно рядом показывать компактное «Дано» с нужными rows/values, formula и grain. Допустимо повторять данные — это снижает лишнюю нагрузку на working memory.
