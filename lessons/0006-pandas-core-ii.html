@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 0006 — Pandas Core II</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body data-lesson="lesson-0006">
+<div class="progress-shell" role="progressbar" aria-label="Прогресс урока" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar" data-progress></div></div>
+<main>
+<nav class="lesson-nav" aria-label="Навигация урока"><a href="0005-pandas-core-i.html">← Lesson 0005</a><span>FAST TRACK · 30–45 минут · 16 checks</span></nav>
+<section class="screen compact-screen">
+  <p class="eyebrow">Pandas Core II</p><h1>От loan rows к portfolio view</h1>
+  <p class="lead">Один interview pipeline: проверить grain и duplicates, агрегировать portfolio, безопасно добавить segment targets через <code>merge</code> и провалидировать result.</p>
+  <div class="card route-map"><strong>Карта:</strong> grain → duplicates → groupby → named aggregation → merge → validate → explain</div>
+  <p class="status-pill" data-saved-status hidden>Этот урок уже пройден в этом browser</p>
+</section>
+
+<section class="screen" id="grain">
+  <p class="eyebrow">1 · Grain before calculation</p><h2>Две tables, два grain</h2>
+  <div class="given"><h3>Дано</h3><p><code>loans</code>: одна row = один loan. <code>targets</code>: одна row = один segment.</p>
+  <div class="table-wrap"><table><thead><tr><th>loan_id</th><th>segment</th><th>dpd</th><th>balance</th></tr></thead><tbody><tr><td>L001</td><td>prime</td><td>0</td><td>10000</td></tr><tr><td>L002</td><td>near_prime</td><td>35</td><td>7000</td></tr><tr><td>L003</td><td>prime</td><td>10</td><td>12000</td></tr><tr><td>L004</td><td>near_prime</td><td>65</td><td>5000</td></tr><tr><td>L005</td><td>prime</td><td>40</td><td>8000</td></tr></tbody></table></div></div>
+  <p>Перед <code>groupby</code> или <code>merge</code> проговорите grain, key и ожидаемый row count. Это защищает portfolio totals от незаметного размножения rows.</p>
+  <div class="quiz" data-quiz data-correct="Верно: loan_id должен идентифицировать одну loan row." data-wrong="Grain loans — одна row на loan."><p><strong>Дано:</strong> одна row = один loan. Какой ожидаемый unique key?</p><div class="choices"><button class="choice" data-answer="correct"><code>loan_id</code></button><button class="choice" data-answer="wrong"><code>segment</code></button><button class="choice" data-answer="wrong"><code>balance</code></button><button class="choice" data-answer="wrong"><code>dpd</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Да: пять loan rows и четыре columns." data-wrong="shape записывается как (rows, columns)."><p><strong>Дано:</strong> в table выше 5 loans и 4 columns. Чему равен <code>loans.shape</code>?</p><div class="choices"><button class="choice" data-answer="wrong"><code>(4, 5)</code></button><button class="choice" data-answer="correct"><code>(5, 4)</code></button><button class="choice" data-answer="wrong"><code>(5, 5)</code></button><button class="choice" data-answer="wrong"><code>(20,)</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+
+<section class="screen" id="duplicates">
+  <p class="eyebrow">2 · Duplicate diagnostics</p><h2>Не удалять до понимания причины</h2>
+  <pre><code>loans["loan_id"].duplicated().sum()       # 0
+loans.duplicated(subset="loan_id", keep=False)
+loans.drop_duplicates(subset="loan_id", keep="last")</code></pre>
+  <p><code>duplicated(..., keep=False)</code> отмечает все occurrences повторяющегося key. <code>drop_duplicates</code> — уже policy: применять только если известно, почему выбран <code>first</code> или <code>last</code>.</p>
+  <div class="quiz" data-quiz data-correct="Верно: keep=False показывает все rows конфликтующего key." data-wrong="Нужно увидеть обе стороны duplicate, а не скрыть одну."><p><strong>Дано:</strong> L002 встречается дважды. Как показать обе rows?</p><div class="choices"><button class="choice" data-answer="wrong"><code>keep="first"</code></button><button class="choice" data-answer="wrong"><code>keep="last"</code></button><button class="choice" data-answer="correct"><code>keep=False</code></button><button class="choice" data-answer="wrong"><code>keep=True</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Точно: сначала диагностируем причину и business meaning." data-wrong="Удаление — policy, а не универсальная очистка."><p><strong>Дано:</strong> duplicate key найден, но timestamp/source неизвестны. Какой первый шаг?</p><div class="choices"><button class="choice" data-answer="wrong">Удалить first</button><button class="choice" data-answer="wrong">Удалить last</button><button class="choice" data-answer="correct">Исследовать причину</button><button class="choice" data-answer="wrong">Сложить balances</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+
+<section class="screen" id="groupby">
+  <p class="eyebrow">3 · Groupby mental model</p><h2>Split → apply → combine</h2>
+  <pre><code>segment_balance = (
+    loans.groupby("segment", as_index=False)["balance"]
+         .sum()
+)</code></pre>
+  <div class="given"><h3>Дано для расчёта</h3><p>prime balances: 10000, 12000, 8000. near_prime balances: 7000, 5000.</p></div>
+  <p><code>groupby("segment")</code> собирает rows в groups, <code>sum()</code> применяется внутри каждой group, а <code>as_index=False</code> оставляет segment обычной column.</p>
+  <div class="quiz" data-quiz data-correct="Да: 10000 + 12000 + 8000 = 30000." data-wrong="Сложите три prime balances из блока «Дано»."><p><strong>Дано:</strong> prime = 10000 + 12000 + 8000. Какой total?</p><div class="choices"><button class="choice" data-answer="wrong"><code>20000</code></button><button class="choice" data-answer="correct"><code>30000</code></button><button class="choice" data-answer="wrong"><code>32000</code></button><button class="choice" data-answer="wrong"><code>42000</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Верно: result содержит по одной row на каждый из двух segments." data-wrong="После grouping row grain становится один segment."><p><strong>Дано:</strong> есть только prime и near_prime. Сколько rows в result?</p><div class="choices"><button class="choice" data-answer="wrong">Одна</button><button class="choice" data-answer="correct">Две</button><button class="choice" data-answer="wrong">Три</button><button class="choice" data-answer="wrong">Пять</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+
+<section class="screen" id="named-agg">
+  <p class="eyebrow">4 · Named aggregation</p><h2>Несколько portfolio metrics за один pass</h2>
+  <pre><code>summary = loans.groupby("segment", as_index=False).agg(
+    loan_count=("loan_id", "nunique"),
+    total_balance=("balance", "sum"),
+    bad_loans=("is_bad", "sum"),
+    bad_rate=("is_bad", "mean")
+)</code></pre>
+  <div class="given"><h3>Дано для расчёта</h3><p><code>is_bad = dpd >= 30</code>. prime flags: False, False, True. near_prime flags: True, True.</p></div>
+  <p>В каждой паре слева задаётся output column, справа — <code>(source_column, aggregation)</code>. Для boolean values: <code>sum</code> считает True, <code>mean</code> даёт долю True.</p>
+  <div class="quiz" data-quiz data-correct="Верно: один True из трёх prime loans." data-wrong="Boolean sum считает True: False + False + True = 1."><p><strong>Дано:</strong> prime flags = False, False, True. Чему равен <code>bad_loans</code>?</p><div class="choices"><button class="choice" data-answer="wrong"><code>0</code></button><button class="choice" data-answer="correct"><code>1</code></button><button class="choice" data-answer="wrong"><code>2</code></button><button class="choice" data-answer="wrong"><code>3</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Да: 1 / 3 ≈ 0.333, то есть 33.3%." data-wrong="mean boolean flags = True count / row count."><p><strong>Дано:</strong> у prime 1 bad из 3 loans. Какой <code>bad_rate</code>?</p><div class="choices"><button class="choice" data-answer="wrong"><code>0.000</code></button><button class="choice" data-answer="correct"><code>0.333</code></button><button class="choice" data-answer="wrong"><code>0.500</code></button><button class="choice" data-answer="wrong"><code>1.000</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Точно: обе near_prime rows bad, поэтому rate = 2 / 2 = 1." data-wrong="Два True из двух observations дают mean 1.0."><p><strong>Дано:</strong> near_prime flags = True, True. Какой <code>bad_rate</code>?</p><div class="choices"><button class="choice" data-answer="wrong"><code>0.000</code></button><button class="choice" data-answer="wrong"><code>0.333</code></button><button class="choice" data-answer="wrong"><code>0.500</code></button><button class="choice" data-answer="correct"><code>1.000</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Верно: near_prime balance = 7000 + 5000 = 12000." data-wrong="Сложите два near_prime balances из исходного «Дано»."><p><strong>Дано:</strong> near_prime balances = 7000 и 5000. Какой <code>total_balance</code>?</p><div class="choices"><button class="choice" data-answer="wrong"><code>5000</code></button><button class="choice" data-answer="wrong"><code>7000</code></button><button class="choice" data-answer="correct"><code>12000</code></button><button class="choice" data-answer="wrong"><code>30000</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+
+<section class="screen" id="merge">
+  <p class="eyebrow">5 · Merge with a contract</p><h2>Добавляем target по segment</h2>
+  <div class="given"><h3>Дано</h3><div class="table-wrap"><table><thead><tr><th>segment</th><th>bad_rate</th></tr></thead><tbody><tr><td>prime</td><td>0.333</td></tr><tr><td>near_prime</td><td>1.000</td></tr></tbody></table></div><div class="table-wrap"><table><thead><tr><th>segment</th><th>target_bad_rate</th></tr></thead><tbody><tr><td>prime</td><td>0.10</td></tr><tr><td>near_prime</td><td>0.25</td></tr></tbody></table></div></div>
+  <pre><code>report = summary.merge(
+    targets,
+    on="segment",
+    how="left",
+    validate="one_to_one",
+    indicator=True
+)</code></pre>
+  <p><code>left</code> сохраняет все summary segments. <code>validate="one_to_one"</code> превращает ожидаемую cardinality в executable check. <code>indicator=True</code> добавляет <code>_merge</code> для проверки matching.</p>
+  <div class="quiz" data-quiz data-correct="Верно: left merge сохраняет все rows левой summary." data-wrong="how='left' задаёт сохранение left table."><p><strong>Дано:</strong> summary — left table. Какой <code>how</code> сохраняет все её segments?</p><div class="choices"><button class="choice" data-answer="wrong"><code>inner</code></button><button class="choice" data-answer="correct"><code>left</code></button><button class="choice" data-answer="wrong"><code>right</code></button><button class="choice" data-answer="wrong"><code>cross</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Да: segment уникален в обеих tables, значит one_to_one." data-wrong="Одна summary row и одна target row на каждый segment."><p><strong>Дано:</strong> в обеих tables segment встречается один раз. Какой validation contract?</p><div class="choices"><button class="choice" data-answer="correct"><code>one_to_one</code></button><button class="choice" data-answer="wrong"><code>one_to_many</code></button><button class="choice" data-answer="wrong"><code>many_to_one</code></button><button class="choice" data-answer="wrong"><code>many_to_many</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Точно: both означает key найден в обеих tables." data-wrong="_merge описывает происхождение matched row."><p><strong>Дано:</strong> prime есть и в summary, и в targets. Что содержит его <code>_merge</code>?</p><div class="choices"><button class="choice" data-answer="wrong"><code>left_only</code></button><button class="choice" data-answer="wrong"><code>right_only</code></button><button class="choice" data-answer="correct"><code>both</code></button><button class="choice" data-answer="wrong"><code>matched</code></button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+
+<section class="screen" id="validation">
+  <p class="eyebrow">6 · Portfolio validation</p><h2>Rows, totals, matches</h2>
+  <pre><code>assert len(report) == len(summary)
+assert report["total_balance"].sum() == loans["balance"].sum()
+assert report["_merge"].eq("both").all()</code></pre>
+  <div class="given"><h3>Дано для checks</h3><p>summary totals: prime 30000, near_prime 12000. Source total: 42000. Обе target rows matched.</p></div>
+  <p>Validation отвечает на три разных вопроса: не изменился ли row count, сохранился ли денежный total, все ли keys нашли match. Один check не заменяет остальные.</p>
+  <div class="quiz" data-quiz data-correct="Верно: 30000 + 12000 = source total 42000." data-wrong="Сложите два segment totals и сравните с source."><p><strong>Дано:</strong> segment totals 30000 и 12000; source total 42000. Сохранён ли balance?</p><div class="choices"><button class="choice" data-answer="correct">Да, сохранён</button><button class="choice" data-answer="wrong">Нет, +12000</button><button class="choice" data-answer="wrong">Нет, −12000</button><button class="choice" data-answer="wrong">Нельзя узнать</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="quiz" data-quiz data-correct="Да: left_only указывает на отсутствующий target key." data-wrong="Row сохранилась из left table, но match справа не найден."><p><strong>Дано:</strong> после left merge одна row имеет <code>_merge = "left_only"</code>. Что это значит?</p><div class="choices"><button class="choice" data-answer="wrong">Duplicate loan</button><button class="choice" data-answer="correct">Target не найден</button><button class="choice" data-answer="wrong">Balance missing</button><button class="choice" data-answer="wrong">Rate равен zero</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+</section>
+
+<section class="screen compact-screen" id="checkpoint">
+  <p class="eyebrow">7 · Финиш · Один chat checkpoint</p><h2>Объясните result как на interview</h2>
+  <div class="quiz" data-quiz data-correct="Верно: ключевой safe pipeline — check, aggregate, merge с contract, validate." data-wrong="До reporting нужны проверки grain/duplicates и результата merge."><p><strong>Дано:</strong> нужно построить segment report. Какой workflow безопаснее?</p><div class="choices"><button class="choice" data-answer="correct">Check → aggregate → merge → validate</button><button class="choice" data-answer="wrong">Merge → delete → assume → export</button><button class="choice" data-answer="wrong">Sort → fill → merge → ignore</button><button class="choice" data-answer="wrong">Aggregate → export → check → merge</button></div><p class="feedback" data-feedback aria-live="polite"></p></div>
+  <div class="card lesson-complete" data-completion hidden>
+    <h2>Pandas Core II пройден</h2>
+    <div class="given"><h3>Дано — всё нужное для ответа</h3><p>После aggregation: prime — 3 loans, 1 bad, balance 30000, target bad rate 10%; near_prime — 2 loans, 2 bad, balance 12000, target 25%. Merge прошёл <code>one_to_one</code>, все <code>_merge = "both"</code>, total balance до и после = 42000.</p></div>
+    <p>Отправьте один ответ: <strong>какой segment хуже target, как вы это доказали и какие три validation checks защищают вывод?</strong></p>
+  </div>
+</section>
+<section class="sources"><h2>Primary sources</h2><p><a href="https://pandas.pydata.org/docs/user_guide/groupby.html">pandas GroupBy user guide</a>, <a href="https://pandas.pydata.org/docs/user_guide/merging.html">pandas Merge, join, concatenate and compare</a> и <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.duplicated.html">pandas DataFrame.duplicated</a>.</p></section>
+<footer><p>Если один method непонятен, спросите агента. Иначе завершите 16 checks и пришлите только итоговый checkpoint.</p></footer>
+</main><script src="../assets/lesson.js"></script>
+</body></html>
